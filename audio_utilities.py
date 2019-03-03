@@ -1,13 +1,13 @@
 from watson_developer_cloud import SpeechToTextV1
 import json
 import pyaudio
+import wave
 
 
 FORMAT = pyaudio.paInt16
 CHANNELS = 2
 RATE = 44100
 CHUNK = 1024
-RECORD_SECONDS = 30
 
 def transcribe_audio_file(path_to_file='./file.wav'):
     speech_to_text = SpeechToTextV1(
@@ -26,6 +26,7 @@ def transcribe_audio_file(path_to_file='./file.wav'):
 
 
 def play_audio(filename='file.wav'):
+    chunk = CHUNK
     wf = wave.open(filename, 'rb')
     # create an audio object
     p = pyaudio.PyAudio()
@@ -39,20 +40,21 @@ def play_audio(filename='file.wav'):
 
     # read data (based on the chunk size)
     data = wf.readframes(CHUNK)
-
+    
     # play stream (looping from beginning of file to the end)
-    while data != '':
+    while data != '' and len(data) != 0:
         # writing to the stream is what *actually* plays the sound.
         stream.write(data)
         data = wf.readframes(chunk)
-
+    
     # cleanup stuff.
     stream.close()    
     p.terminate()
+    return
 
 
-def record_audio(filename='file.wav'):
-    
+def record_audio(filename='file.wav', duration=30):
+    RECORD_SECONDS = duration
     WAVE_OUTPUT_FILENAME = filename
     audio = pyaudio.PyAudio()
     
@@ -83,3 +85,7 @@ def record_audio(filename='file.wav'):
 
 
 # print(transcribe_audio_file('./reading_article_with_silences.wav'))
+
+if __name__ == '__main__':
+    play_audio('edited_audio.wav')
+    # record_audio('long_audio_with_silences.wav', 180)
