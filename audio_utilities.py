@@ -87,5 +87,6 @@ def record_audio(filename='file.wav', duration=30):
 # print(transcribe_audio_file('./reading_article_with_silences.wav'))
 
 if __name__ == '__main__':
-    play_audio('edited_audio.wav')
-    # record_audio('long_audio_with_silences.wav', 180)
+    # play_audio('edited_audio.wav')
+    record_audio('hesitations_test2.wav', 45)
+    # play_audio('hesitations_test.wav')
