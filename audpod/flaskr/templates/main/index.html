@@ -1,0 +1,77 @@
+{% extends 'base.html' %}
+{% block header %}
+	<!--{% block title %}AudPod{% endblock %}-->
+  <header class="grid__col--12 panel--padded--centered" role="banner"><img src="/static/site-logo.png" width=300></img></header>
+  
+{% endblock %}
+
+{% block content %}
+<div class="grid">
+      <span class="grid__col--12 panel--padded--centered" role="contentinfo">
+        <p>Instructions: First, set a minimum silence length to mark non-speech segments. Then, listen to each segment and reduce it by desired amount.</p>
+      </span>
+</div>
+<form method="post" class="grid">
+    <label for="silenceThreshold">Minimum Silence Length (S to focus)</label>
+    <input name="silenceThreshold" class="form__input" type="text" id="silenceThreshold" placeholder="Minimum Silence Length in sec (e.g. 0.5)">
+    <input type="submit" name="audpod_button" id="set_threshold" value="Set Threshold" class="btn--info"> &nbsp; <!--<span> Threshold: {{ get_threshold }} </span>-->
+</form>
+<form method="post" class="grid">
+  <label for="reduceRatio">Chunk Reduction Ratio (D to focus)</label>
+  <input name="reduceRatio" class="form__input" type="text" id="reduceRatio" placeholder="Please enter the ratio to reduce the current silent chunk by (e.g. 0.5). Press C for default">
+  <input type="submit" name="audpod_button" id="play_chunk" value="Play Non-Speech Chunk (L)" class="btn--default">
+  <input type="submit" name="audpod_button" id="reduce_chunk" value="Reduce Non-Speech Chunk (K)" class="btn--error">
+  <input type="submit" name="audpod_button" id="confirm_chunk" value="Confirm Reduced Non-Speech Chunk (H)" class="btn--default">
+</form>
+<script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
+<script>
+	$('#set_threshold').click(function (){
+		//$('#threshold_display').text( $('#silenceThreshold').val().replace(/[^\.\d]/g,'') );
+	});
+	$(document).keyup(function (e) {
+   		if (e.keyCode == 76) { // L
+   			$('#play_chunk').click();
+    	}
+    	if (e.keyCode == 75) { // K
+    		$('#reduceRatio').val( $('#reduceRatio').val().replace(/[^\.\d]/g,'') );
+      		$('#reduce_chunk').click();
+      		$('#reduceRatio').focus();
+    	}
+    	if (e.keyCode == 72) { // H
+      		$('#confirm_chunk').click();
+      		$('#reduceRatio').focus();
+    	}
+    	if (e.keyCode == 77) { // M
+      		$('#finish_download').click();
+    	}
+    	if (e.keyCode == 68) { // D
+    		$('#reduceRatio').val('');
+      		$('#reduceRatio').focus();
+    	}
+    	if (e.keyCode == 83) { // S
+    		$('#silenceThreshold').val('');
+      		$('#silenceThreshold').focus();
+    	}
+    	if (e.keyCode == 67) { // C, implements default
+    		$('#reduceRatio').val( '0.5' );
+      		$('#reduce_chunk').click();
+    	}
+	});
+</script>
+<form method="post" class="grid">
+  {% for silence_counter in silence_counters %}
+    <span>Current Chunk: </span>
+    <div >{{ silence_counter[0] }} / {{silence_counter[1]}}</div>
+  {% endfor %}
+  <input type="submit" name="audpod_button" id="finish_download" value="Finish & Download (M)" class="btn--default">
+</form>
+
+<div class="grid">
+      <footer class="grid__col--12 panel--padded--centered" role="contentinfo">
+        <a class="site-logo" href="#">
+          <b class="srt">AudPOD - Podcast Editing Tool</b>
+        </a>
+        <p>An accessible podcast editing tool. Abir Saha, Timothy Mwiti, Logan Danek</p>
+      </footer>
+</div>
+{% endblock %}
